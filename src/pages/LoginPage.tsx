@@ -41,18 +41,18 @@ export function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center p-4">
-            <Card className="w-full max-w-md animate-slide-in">
-                <CardHeader className="text-center space-y-2">
-                    <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
-                        <GraduationCap className="h-8 w-8 text-purple-600" />
+        <div className="min-h-screen bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center p-4 sm:p-6">
+            <Card className="w-full max-w-sm sm:max-w-md animate-slide-in">
+                <CardHeader className="text-center space-y-2 pb-4 sm:pb-6">
+                    <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center mb-2">
+                        <GraduationCap className="h-7 w-7 sm:h-8 sm:w-8 text-purple-600" />
                     </div>
-                    <CardTitle className="text-2xl">Portal do Aluno</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-xl sm:text-2xl">Portal do Aluno</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">
                         Entre com seu e-mail e senha
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pb-6">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email">E-mail</Label>
