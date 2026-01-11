@@ -25,10 +25,11 @@ import {
 } from 'lucide-react';
 
 // Helper: Format CPF
-function formatCPF(cpf: string | undefined): string {
-    if (!cpf) return 'Não informado';
-    const clean = cpf.replace(/\D/g, '');
-    if (clean.length !== 11) return cpf;
+function formatCPF(cpf: string | number | undefined | null): string {
+    if (cpf === null || cpf === undefined || cpf === '') return 'Não informado';
+    const cpfStr = String(cpf);
+    const clean = cpfStr.replace(/\D/g, '');
+    if (clean.length !== 11) return cpfStr;
     return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
@@ -144,8 +145,8 @@ export function HomePage() {
                                     <Badge
                                         variant="secondary"
                                         className={`text-[10px] sm:text-xs ${(stats?.frequencia || 0) >= 75
-                                                ? 'bg-green-50 text-green-700'
-                                                : 'bg-red-50 text-red-700'
+                                            ? 'bg-green-50 text-green-700'
+                                            : 'bg-red-50 text-red-700'
                                             }`}
                                     >
                                         {stats?.status}
@@ -285,8 +286,8 @@ export function HomePage() {
                                             <Badge
                                                 variant="outline"
                                                 className={`shrink-0 text-[9px] sm:text-[10px] ${b.situacao === 'Ativo'
-                                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                                        : 'bg-gray-50 text-gray-600 border-gray-200'
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                    : 'bg-gray-50 text-gray-600 border-gray-200'
                                                     }`}
                                             >
                                                 {b.situacao}
