@@ -59,11 +59,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     dados_atualizados_em: meResponse.data.dados_atualizados_em,
                 });
 
-                // Lógica de verificação de atualização de dados (6 meses)
-                if (!meResponse.data.dados_atualizados_em) {
+                // Verifica se os dados vitais estão preenchidos
+                const d = meResponse.data;
+                const isDataComplete = !!(
+                    d.telefone_responsavel &&
+                    d.telefone_aluno &&
+                    d.endereco &&
+                    d.data_nascimento &&
+                    d.nome_responsavel &&
+                    d.dados_atualizados_em
+                );
+
+                if (!isDataComplete) {
                     setShouldUpdateData(true);
                 } else {
-                    const ultimaAtu = new Date(meResponse.data.dados_atualizados_em);
+                    // Lógica de verificação de atualização de dados (6 meses)
+                    const ultimaAtu = new Date(d.dados_atualizados_em as string);
                     const seisMesesAtras = new Date();
                     seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6);
                     setShouldUpdateData(ultimaAtu < seisMesesAtras);

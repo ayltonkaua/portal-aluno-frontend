@@ -72,11 +72,11 @@ export function DataUpdateModal({
             if (res.success) {
                 setSuccess(true);
                 setTimeout(async () => {
+                    // Refresh vai atualizar shouldUpdateData para false (se os dados vierem completos da API)
                     await refreshUser();
-                    if (!shouldUpdateData && onCloseEdit) {
-                        onCloseEdit();
-                        setSuccess(false);
-                    }
+                    
+                    if (onCloseEdit) onCloseEdit();
+                    setSuccess(false);
                 }, 1500);
             } else {
                 setError(res.error || 'Erro ao atualizar dados');
@@ -126,7 +126,7 @@ export function DataUpdateModal({
                         </div>
                         <h3 className="text-lg font-bold text-gray-900">Dados atualizados!</h3>
                         <p className="text-sm text-gray-500">
-                            {shouldUpdateData ? 'Obrigado pela colaboração. Você será redirecionado em instantes.' : 'Suas informações foram salvas com sucesso.'}
+                            {shouldUpdateData ? 'Obrigado! Suas informações foram salvas.' : 'Suas informações foram salvas com sucesso.'}
                         </p>
                     </div>
                 ) : (
@@ -312,6 +312,7 @@ export function DataUpdateModal({
                                     <Input
                                         id="tel_aluno"
                                         placeholder="(99) 99999-9999"
+                                        required
                                         value={formData.telefone_aluno}
                                         onChange={(e) => setFormData({ ...formData, telefone_aluno: e.target.value })}
                                     />

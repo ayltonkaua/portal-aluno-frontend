@@ -205,7 +205,7 @@ export function HomePage() {
                                 let badgeClass = 'bg-purple-50 text-purple-700';
                                 let textHover = 'group-hover:text-purple-700';
                                 let barColor = 'bg-purple-500';
-                                
+
                                 if (aviso.tipo === 'Importante') {
                                     badgeClass = 'bg-red-50 text-red-700';
                                     textHover = 'group-hover:text-red-700';
@@ -320,6 +320,25 @@ export function HomePage() {
                                 </div>
                             </Button>
                         </Link>
+
+                        <a
+                            href="https://curriculo.chamadadiaria.com.br"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-auto w-full flex flex-col items-center justify-center gap-2 sm:gap-3 py-4 sm:py-6 rounded-xl border shadow-sm bg-white hover:bg-purple-50 hover:text-purple-700 hover:border-purple-500 transition-all group"
+                        >
+                            <div className="p-2 sm:p-3 bg-blue-50 rounded-xl sm:rounded-2xl text-blue-600 group-hover:scale-110 transition-transform">
+                                <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+                            </div>
+                            <div className="text-center">
+                                <span className="text-[10px] sm:text-xs font-bold block text-gray-700 group-hover:text-purple-700">
+                                    Currículos
+                                </span>
+                                <span className="text-[8px] sm:text-[10px] text-gray-400 font-normal hidden sm:block">
+                                    Acessar/Criar
+                                </span>
+                            </div>
+                        </a>
                     </div>
                 </section>
 
