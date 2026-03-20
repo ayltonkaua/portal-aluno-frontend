@@ -12,20 +12,24 @@ interface AuthUser {
     matricula: string;
     turma: string;
     escolaNome: string;
+    dados_atualizados_em?: string | null;
 }
 
 interface AuthContextType {
     user: AuthUser | null;
     isLoading: boolean;
     isAuthenticated: boolean;
+    shouldUpdateData: boolean;
     login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     logout: () => void;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
+    const [shouldUpdateData, setShouldUpdateData] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     // Check for existing token on mount
@@ -52,7 +56,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     matricula: meResponse.data.matricula,
                     turma: meResponse.data.turma,
                     escolaNome: escolaResponse.data?.nome || 'Escola',
+                    dados_atualizados_em: meResponse.data.dados_atualizados_em,
                 });
+
+                // Lógica de verificação de atualização de dados (6 meses)
+                if (!meResponse.data.dados_atualizados_em) {
+                    setShouldUpdateData(true);
+                } else {
+                    const ultimaAtu = new Date(meResponse.data.dados_atualizados_em);
+                    const seisMesesAtras = new Date();
+                    seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6);
+                    setShouldUpdateData(ultimaAtu < seisMesesAtras);
+                }
             } else {
                 // Token invalid, clear it
                 api.setToken(null);
@@ -67,7 +82,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-        setIsLoading(true);
         try {
             const result = await portalApi.login(email, password);
 
@@ -84,8 +98,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return { success: false, error: result.error || 'Erro ao fazer login' };
         } catch {
             return { success: false, error: 'Erro de conexão' };
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -100,8 +112,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user,
                 isLoading,
                 isAuthenticated: !!user,
+                shouldUpdateData,
                 login,
                 logout,
+                refreshUser: loadUserData,
             }}
         >
             {children}

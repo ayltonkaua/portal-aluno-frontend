@@ -93,6 +93,27 @@ export const api = new ApiClient();
 // API Functions
 // ===============
 
+export interface Comunicado {
+    id: string;
+    titulo: string;
+    conteudo: string;
+    tipo: 'Importante' | 'Evento' | 'Aviso';
+    data_publicacao: string;
+    ativo: boolean;
+}
+
+export interface OportunidadeEstagio {
+    id: string;
+    empresa?: string;
+    cargo: string;
+    descricao: string;
+    bolsa?: number;
+    requisitos?: string;
+    link_inscricao?: string;
+    data_publicacao: string;
+    ativo: boolean;
+}
+
 export interface StudentData {
     id: string;
     nome: string;
@@ -103,6 +124,16 @@ export interface StudentData {
     nome_responsavel?: string;
     telefone_responsavel?: string;
     endereco?: string;
+    data_nascimento?: string;
+    trabalha?: boolean;
+    mora_com_familia?: boolean;
+    recebe_bolsa_familia?: boolean;
+    recebe_pe_de_meia?: boolean;
+    usa_transporte?: boolean;
+    tem_passe_livre?: boolean;
+    telefone_aluno?: string;
+    telefone_responsavel_2?: string;
+    dados_atualizados_em?: string;
 }
 
 export interface FrequenciaStats {
@@ -119,6 +150,15 @@ export interface Atestado {
     data_fim: string;
     descricao: string;
     status: 'pendente' | 'aprovado' | 'rejeitado';
+    created_at: string;
+}
+
+export interface SolicitacaoSuporte {
+    id: string;
+    assunto: string;
+    mensagem: string;
+    telefone_contato?: string;
+    status: string;
     created_at: string;
 }
 
@@ -229,7 +269,7 @@ export const portalApi = {
     // Me
     getMe: () => api.get<StudentData>('/me'),
     getFrequencia: () => api.get<FrequenciaStats>('/me/frequencia'),
-    updateDados: (data: { nome_responsavel?: string; telefone_responsavel?: string; endereco?: string }) =>
+    updateDados: (data: Partial<StudentData>) =>
         api.patch<null>('/me/dados', data),
 
     // Boletim
@@ -245,6 +285,15 @@ export const portalApi = {
 
     // Escola
     getEscola: () => api.get<EscolaInfo>('/escola'),
+
+    // Comunicação e Estágios
+    getAvisos: () => api.get<Comunicado[]>('/avisos'),
+    getEstagios: () => api.get<OportunidadeEstagio[]>('/estagios'),
+
+    // Suporte
+    getSuporteTickets: () => api.get<SolicitacaoSuporte[]>('/suporte'),
+    createSuporteTicket: (data: { assunto: string; mensagem: string; telefone_contato: string }) =>
+        api.post<SolicitacaoSuporte>('/suporte', data),
 };
 
 

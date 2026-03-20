@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { portalApi, FrequenciaStats, Beneficio } from '@/lib/api';
+import { portalApi, FrequenciaStats, Beneficio, Comunicado } from '@/lib/api';
 import { AttendanceRing } from '@/components/AttendanceRing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,17 +63,20 @@ export function HomePage() {
     const { user, logout } = useAuth();
     const [stats, setStats] = useState<FrequenciaStats | null>(null);
     const [beneficios, setBeneficios] = useState<Beneficio[]>([]);
+    const [avisos, setAvisos] = useState<Comunicado[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
-            const [statsRes, benRes] = await Promise.all([
+            const [statsRes, benRes, avisosRes] = await Promise.all([
                 portalApi.getFrequencia(),
                 portalApi.getBeneficios(),
+                portalApi.getAvisos(),
             ]);
             if (statsRes.success && statsRes.data) setStats(statsRes.data);
             if (benRes.success && benRes.data) setBeneficios(benRes.data);
+            if (avisosRes.success && avisosRes.data) setAvisos(avisosRes.data);
             setLoading(false);
         }
         fetchData();
@@ -103,12 +106,12 @@ export function HomePage() {
                         {user?.nome?.charAt(0).toUpperCase() || 'A'}
                     </div>
                     <div>
-                        <h1 className="text-sm sm:text-base font-bold text-gray-900 leading-none">
-                            Olá, {user?.nome?.split(' ')[0]}
-                        </h1>
-                        <p className="text-xs sm:text-sm text-gray-500 mt-0.5 truncate max-w-[120px] sm:max-w-xs">
-                            {user?.escolaNome}
+                        <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5 truncate max-w-[150px] sm:max-w-xs">
+                            {user?.escolaNome || 'Escola'}
                         </p>
+                        <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-none">
+                            Olá, {user?.nome?.split(' ')[0]} 👋
+                        </h1>
                     </div>
                 </div>
                 <div className="flex gap-1 sm:gap-2">
@@ -176,6 +179,63 @@ export function HomePage() {
                                 {user?.matricula}
                             </p>
                         </div>
+                    </div>
+                </section>
+
+                {/* MURAL RÁPIDO (COMUNICADOS RECENTES) */}
+                <section>
+                    <div className="flex items-center justify-between mb-2 sm:mb-3 px-1">
+                        <h3 className="text-xs sm:text-sm font-semibold text-gray-500">
+                            Mural Rápido
+                        </h3>
+                        {avisos.length > 0 && (
+                            <Link to="/avisos" className="text-[10px] sm:text-xs text-purple-600 font-medium hover:underline">
+                                Ver todos
+                            </Link>
+                        )}
+                    </div>
+                    {/* Horizontal Scroll Snap Container */}
+                    <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                        {avisos.length === 0 ? (
+                            <div className="w-full text-center py-6 bg-white rounded-xl border border-dashed border-gray-200 shadow-sm text-gray-400 text-xs">
+                                Nenhum aviso recente.
+                            </div>
+                        ) : (
+                            avisos.slice(0, 3).map((aviso) => {
+                                let badgeClass = 'bg-purple-50 text-purple-700';
+                                let textHover = 'group-hover:text-purple-700';
+                                let barColor = 'bg-purple-500';
+                                
+                                if (aviso.tipo === 'Importante') {
+                                    badgeClass = 'bg-red-50 text-red-700';
+                                    textHover = 'group-hover:text-red-700';
+                                    barColor = 'bg-red-500';
+                                } else if (aviso.tipo === 'Evento') {
+                                    badgeClass = 'bg-indigo-50 text-indigo-700';
+                                    textHover = 'group-hover:text-indigo-700';
+                                    barColor = 'bg-indigo-500';
+                                }
+
+                                return (
+                                    <Link key={aviso.id} to="/avisos" className="min-w-[240px] sm:min-w-[280px] flex-shrink-0 snap-center outline-none">
+                                        <Card className="h-full bg-white border-none shadow-sm ring-1 ring-gray-100 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between overflow-hidden relative">
+                                            <div className={`w-1 h-full absolute left-0 top-0 ${barColor}`} />
+                                            <CardContent className="p-3 sm:p-4 pl-4 sm:pl-5">
+                                                <span className={`text-[9px] sm:text-[10px] font-medium px-2 py-0.5 rounded-full mb-2 inline-block ${badgeClass}`}>
+                                                    {aviso.tipo}
+                                                </span>
+                                                <h4 className={`font-bold text-sm text-gray-900 mb-1 transition-colors line-clamp-1 ${textHover}`}>
+                                                    {aviso.titulo}
+                                                </h4>
+                                                <p className="text-xs text-gray-500 line-clamp-2">
+                                                    {aviso.conteudo}
+                                                </p>
+                                            </CardContent>
+                                        </Card>
+                                    </Link>
+                                );
+                            })
+                        )}
                     </div>
                 </section>
 

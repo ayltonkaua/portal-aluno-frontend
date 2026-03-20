@@ -17,6 +17,11 @@ import { BoletimPage } from '@/pages/BoletimPage';
 import { AtestadosPage } from '@/pages/AtestadosPage';
 import { MeusDadosPage } from '@/pages/MeusDadosPage';
 import { CarterinhaPage } from '@/pages/CarterinhaPage';
+import { AvisosPage } from '@/pages/AvisosPage';
+import { EstagiosPage } from '@/pages/EstagiosPage';
+import { SuportePage } from '@/pages/SuportePage';
+import { PortalLayout } from '@/components/PortalLayout';
+import { DataUpdateModal } from '@/components/DataUpdateModal';
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -58,8 +63,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
     return (
-        <Routes>
-            {/* Public Auth Pages */}
+        <>
+            <DataUpdateModal />
+            <Routes>
+                {/* Public Auth Pages */}
             <Route
                 path="/login"
                 element={
@@ -90,50 +97,21 @@ function AppRoutes() {
             />
 
             {/* Protected */}
-            <Route
-                path="/"
-                element={
-                    <ProtectedRoute>
-                        <HomePage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/boletim"
-                element={
-                    <ProtectedRoute>
-                        <BoletimPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/atestados"
-                element={
-                    <ProtectedRoute>
-                        <AtestadosPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/meus-dados"
-                element={
-                    <ProtectedRoute>
-                        <MeusDadosPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/carteirinha"
-                element={
-                    <ProtectedRoute>
-                        <CarterinhaPage />
-                    </ProtectedRoute>
-                }
-            />
+            <Route element={<ProtectedRoute><PortalLayout /></ProtectedRoute>}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/boletim" element={<BoletimPage />} />
+                <Route path="/atestados" element={<AtestadosPage />} />
+                <Route path="/meus-dados" element={<MeusDadosPage />} />
+                <Route path="/carteirinha" element={<CarterinhaPage />} />
+                <Route path="/avisos" element={<AvisosPage />} />
+                <Route path="/suporte" element={<SuportePage />} />
+                <Route path="/estagios" element={<EstagiosPage />} />
+            </Route>
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </>
     );
 }
 
